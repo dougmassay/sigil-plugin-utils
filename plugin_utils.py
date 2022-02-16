@@ -135,7 +135,7 @@ def convertWeights(weight, inverted=False, shift=False):
     about (unless they choose to, of course - hence the overrides)'''
 class PluginApplication(QtWidgets.QApplication):
     def __init__(self, args, bk, app_icon=None, match_fonts=True,
-                match_highdpi=True, match_dark_palette=True,
+                match_highdpi=True, match_dark_palette=False,
                 match_whats_this=True, load_qtbase_translations=True,
                 load_qtplugin_translations=True, plugin_trans_folder=None):
 
