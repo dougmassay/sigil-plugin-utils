@@ -69,6 +69,15 @@ iswindows = 'win32' in _plat or 'win64' in _plat
 ismacos = isosx = 'darwin' in _plat
 
 
+''' PyQt5 translations don't like bytestrings
+    and PySide6 doesn't like utf-8 '''
+def trans_enc(s):
+    if 'PySide6' in sys.modules:
+        return s
+    else:
+        return s.encode('utf-8')
+
+
 ''' Return a tuple of a version string for easy comparison'''
 def tuple_version(v):
     # No alpha characters in version strings allowed here!
@@ -135,7 +144,7 @@ def convertWeights(weight, inverted=False, shift=False):
     about (unless they choose to, of course - hence the overrides)'''
 class PluginApplication(QtWidgets.QApplication):
     def __init__(self, args, bk, app_icon=None, match_fonts=True,
-                match_highdpi=True, match_dark_palette=True,
+                match_highdpi=True, match_dark_palette=False,
                 match_whats_this=True, dont_use_native_menubars=False,
                 load_qtbase_translations=True, load_qtplugin_translations=True,
                 plugin_trans_folder=None):
@@ -224,7 +233,7 @@ class PluginApplication(QtWidgets.QApplication):
         p = QtGui.QPalette()
         sigil_colors = self.bk.color
         dark_color = QtGui.QColor(sigil_colors("Window"))
-        disabled_color = QtGui.QColor(127,127,127)
+        disabled_color = QtGui.QColor(127, 127, 127)
         dark_link_color = QtGui.QColor(108, 180, 238)
         text_color = QtGui.QColor(sigil_colors("Text"))
         p.setColor(p.Window, dark_color)
@@ -384,8 +393,9 @@ if 'PySide6' in sys.modules:
         # If it's in another directory, however, you may need to set the
         # PYSIDE_LOADUI_CWD environment variable to the resource's directory first.
         # Best practice is not to define icons in the .ui file. Do it at the app level.
-        if os.environ('PYSIDE_LOADUI_CWD') is not None:
-            loader.setWorkingDirectory(os.environ('PYSIDE_LOADUI_CWD'))
+        e = os.environ.get('PYSIDE_LOADUI_CWD', None)
+        if e is not None:
+            loader.setWorkingDirectory(e)
         else:
             loader.setWorkingDirectory(QtCore.QDir(SCRIPT_DIRECTORY))
 
