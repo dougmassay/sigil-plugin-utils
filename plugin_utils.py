@@ -39,12 +39,14 @@ DEBUG = 0
 if SIGIL_QT_MAJOR_VERSION == 6:
     from PySide6 import QtCore, QtGui, QtNetwork, QtPrintSupport, QtSvg, QtWebChannel, QtWidgets  # noqa: F401
     from PySide6 import QtWebEngineCore, QtWebEngineWidgets  # noqa: F401
+    from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile, QWebEngineScript, QWebEngineSettings  # noqa: F401
     from PySide6.QtCore import Qt, Signal, Slot, qVersion  # noqa: F401
     from PySide6.QtGui import QAction, QActionGroup  # noqa: F401
     from PySide6.QtUiTools import QUiLoader  # noqa: F401
 elif SIGIL_QT_MAJOR_VERSION == 5:
     from PyQt5 import QtCore, QtGui, QtNetwork, QtPrintSupport, QtSvg, QtWebChannel, QtWidgets  # noqa: F401
     from PyQt5 import QtWebEngineCore, QtWebEngineWidgets  # noqa: F401
+    from PyQt5.QtWebEngineWidgets import QWebEnginePage, QWebEngineProfile, QWebEngineScript, QWebEngineSettings   # noqa: F401
     from PyQt5.QtCore import Qt, pyqtSignal as Signal, pyqtSlot as Slot, qVersion  # noqa: F401
     from PyQt5.QtWidgets import QAction, QActionGroup  # noqa: F401
     from PyQt5 import uic  # noqa: F401
@@ -145,7 +147,7 @@ def convertWeights(weight, inverted=False, shift=False):
 class PluginApplication(QtWidgets.QApplication):
     def __init__(self, args, bk, app_icon=None, match_fonts=True,
                 match_highdpi=True, match_dark_palette=False,
-                match_whats_this=True, dont_use_native_menubars=False,
+                match_whats_this=True, dont_use_native_menubars=True,
                 load_qtbase_translations=True, load_qtplugin_translations=True,
                 plugin_trans_folder=None):
 
