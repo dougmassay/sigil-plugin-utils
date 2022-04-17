@@ -172,7 +172,7 @@ def convertWeights(weight, inverted=False, shift=False):
 class PluginApplication(QtWidgets.QApplication):
     def __init__(self, args, bk, app_icon=None, match_fonts=True,
                 match_highdpi=True, match_dark_palette=False,
-                match_whats_this=True, dont_use_native_menubars=True,
+                match_whats_this=True, dont_use_native_menubars=False,
                 load_qtbase_translations=True, load_qtplugin_translations=True,
                 plugin_trans_folder=None):
 
