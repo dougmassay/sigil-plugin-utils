@@ -25,23 +25,23 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
 # WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Only for use with Sigil 2.0 and above
+
 import os
 import sys
-import inspect
 
-
-SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 e = os.environ.get('SIGIL_QT_RUNTIME_VERSION', '6.2.2')
 SIGIL_QT_MAJOR_VERSION = tuple(map(int, (e.split("."))))[0]
-DEBUG = 0
+DEBUG = 1
 
-from PySide6 import QtCore, QtGui, QtWidgets  # noqa: F401
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QPalette, QColor, QIcon  # noqa: F401
+from PySide6.QtWidgets import QApplication, QStyleFactory  # noqa: F401
+from PySide6.QtCore import Qt, qVersion, QCoreApplication, QLibraryInfo, QTimer, QTranslator  # noqa: F401
 
 PLUGIN_QT_MAJOR_VERSION = tuple(map(int, (qVersion().split("."))))[0]
 
 # Function alias used to surround translatable strings
-_t = QtCore.QCoreApplication.translate
+_t = QCoreApplication.translate
 
 if DEBUG:
     print('Sigil Qt: ', os.environ.get('SIGIL_QT_RUNTIME_VERSION'))
@@ -75,15 +75,15 @@ def get_qt_translations_path(app_path):
         else:
             return os.path.join(app_path, 'translations')
     else:
-        # This should work on Linux whether it's in an AppImage or not
-        return QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath)
+        # This should work on Linux whether python is in an AppImage or not
+        return QLibraryInfo.location(QLibraryInfo.TranslationsPath)
 
 
 
 ''' Subclass of the QApplication object that includes a lot of
     Sigil specific routines that plugin devs won't have to worry
     about (unless they choose to, of course - hence the overrides)'''
-class PluginApplication(QtWidgets.QApplication):
+class PluginApplication(QApplication):
     def __init__(self, args, bk, app_icon=None, match_fonts=True,
                 match_dark_palette=False, dont_use_native_menubars=False,
                 load_qtbase_translations=True, load_qtplugin_translations=True,
@@ -100,11 +100,11 @@ class PluginApplication(QtWidgets.QApplication):
 
         # Initialize the QApplication to be used by the plugin
         args = [program_name] + args[1:]
-        QtWidgets.QApplication.__init__(self, args)
+        QApplication.__init__(self, args)
 
         # set the app icon (used by all child windows)
         if app_icon is not None:
-            self.setWindowIcon(QtGui.QIcon(app_icon))
+            self.setWindowIcon(QIcon(app_icon))
             if iswindows:
                 ensure_windows_taskbar_icon()
 
@@ -130,35 +130,35 @@ class PluginApplication(QtWidgets.QApplication):
         if DEBUG:
             print('Setting dark palette')
 
-        p = QtGui.QPalette()
+        p = QPalette()
         sigil_colors = self.bk.color
-        dark_color = QtGui.QColor(sigil_colors("Window"))
-        disabled_color = QtGui.QColor(127, 127, 127)
-        dark_link_color = QtGui.QColor(108, 180, 238)
-        text_color = QtGui.QColor(sigil_colors("Text"))
-        p.setColor(QtGui.QPalette.Window, dark_color)
-        p.setColor(QtGui.QPalette.WindowText, text_color)
-        p.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, disabled_color)
-        p.setColor(QtGui.QPalette.Base, QtGui.QColor(sigil_colors("Base")))
-        p.setColor(QtGui.QPalette.AlternateBase, dark_color)
-        p.setColor(QtGui.QPalette.ToolTipBase, dark_color)
-        p.setColor(QtGui.QPalette.ToolTipText, text_color)
-        p.setColor(QtGui.QPalette.Text, text_color)
-        p.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.Text, disabled_color)
-        p.setColor(QtGui.QPalette.Button, dark_color)
-        p.setColor(QtGui.QPalette.ButtonText, text_color)
-        p.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, disabled_color)
-        p.setColor(QtGui.QPalette.BrightText, Qt.red)
-        p.setColor(QtGui.QPalette.Link, dark_link_color)
-        p.setColor(QtGui.QPalette.Highlight, QtGui.QColor(sigil_colors("Highlight")))
-        p.setColor(QtGui.QPalette.HighlightedText, QtGui.QColor(sigil_colors("HighlightedText")))
-        p.setColor(QtGui.QPalette.Disabled, QtGui.QPalette.HighlightedText, disabled_color)
+        dark_color = QColor(sigil_colors("Window"))
+        disabled_color = QColor(127, 127, 127)
+        dark_link_color = QColor(108, 180, 238)
+        text_color = QColor(sigil_colors("Text"))
+        p.setColor(QPalette.Window, dark_color)
+        p.setColor(QPalette.WindowText, text_color)
+        p.setColor(QPalette.Disabled, QPalette.WindowText, disabled_color)
+        p.setColor(QPalette.Base, QColor(sigil_colors("Base")))
+        p.setColor(QPalette.AlternateBase, dark_color)
+        p.setColor(QPalette.ToolTipBase, dark_color)
+        p.setColor(QPalette.ToolTipText, text_color)
+        p.setColor(QPalette.Text, text_color)
+        p.setColor(QPalette.Disabled, QPalette.Text, disabled_color)
+        p.setColor(QPalette.Button, dark_color)
+        p.setColor(QPalette.ButtonText, text_color)
+        p.setColor(QPalette.Disabled, QPalette.ButtonText, disabled_color)
+        p.setColor(QPalette.BrightText, Qt.red)
+        p.setColor(QPalette.Link, dark_link_color)
+        p.setColor(QPalette.Highlight, QColor(sigil_colors("Highlight")))
+        p.setColor(QPalette.HighlightedText, QColor(sigil_colors("HighlightedText")))
+        p.setColor(QPalette.Disabled, QPalette.HighlightedText, disabled_color)
 
-        self.setStyle(QtWidgets.QStyleFactory.create("Fusion"))
+        self.setStyle(QStyleFactory.create("Fusion"))
         self.setPalette(p)
 
     def _setup_ui_font_(self, font_lst):
-        font = QtWidgets.QApplication.font()
+        font = QApplication.font()
         font.fromString(','.join(font_lst))
 
         if DEBUG:
@@ -177,14 +177,14 @@ class PluginApplication(QtWidgets.QApplication):
             # Qt 5.10.1 on Linux resets the global font on first event loop tick.
             # So workaround it by setting the font once again in a timer.
             try:
-                QtCore.QTimer.singleShot(0, lambda : self._setup_ui_font_(lst))
+                QTimer.singleShot(0, lambda : self._setup_ui_font_(lst))
             except Exception:
                 pass
 
     # Install qtbase translator for standard dialogs and such.
     # Use the Sigil language setting unless manually overridden.
     def load_base_qt_translations(self):
-        qt_translator = QtCore.QTranslator(self.instance())
+        qt_translator = QTranslator(self.instance())
         language_override = os.environ.get("SIGIL_PLUGIN_LANGUAGE_OVERRIDE")
         if language_override is not None:
             if DEBUG:
@@ -205,7 +205,7 @@ class PluginApplication(QtWidgets.QApplication):
     # Install translator for the plugin's dialogs (if any).
     # Use the Sigil language setting unless manually overridden.
     def load_plugin_translations(self, trans_folder):
-        plugin_translator = QtCore.QTranslator(self.instance())
+        plugin_translator = QTranslator(self.instance())
         language_override = os.environ.get("SIGIL_PLUGIN_LANGUAGE_OVERRIDE")
         if language_override is not None:
             if DEBUG:
