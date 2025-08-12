@@ -140,7 +140,7 @@ class PluginApplication(QApplication):
         p.setColor(QPalette.WindowText, text_color)
         p.setColor(QPalette.Disabled, QPalette.WindowText, disabled_color)
         p.setColor(QPalette.Base, QColor(sigil_colors("Base")))
-        p.setColor(QPalette.AlternateBase, dark_color)
+        p.setColor(QPalette.AlternateBase, QtGui.QColor(66, 66, 66))
         p.setColor(QPalette.ToolTipBase, dark_color)
         p.setColor(QPalette.ToolTipText, text_color)
         p.setColor(QPalette.Text, text_color)
