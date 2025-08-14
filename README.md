@@ -10,6 +10,6 @@ Many of Mobileread user @Doitsu's plugins have been updated to be compatible wit
 
 ### License Information
 
-sigil-plugin-utils is Licensed under the GPLv3.
+sigil-plugin-utils is Licensed under the BSD 2-Clause License
 
 
